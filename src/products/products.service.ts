@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
+import { EntityNotFoundError } from '../errors/entity-not-found.error';
+import { EntityAlreadyExistsError } from '../errors/entity-already-exists.error';
 
 @Injectable()
 export class ProductsService {
+  private products: Product[] = [];
+
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    const product = this.products.find(product => product?.sku === createProductDto.sku);
+    const newProduct: Product = {
+      ...createProductDto
+    }
+    if (product) {
+      throw new EntityAlreadyExistsError(`Product with sku #${createProductDto.sku} already exists.`);
+    } else {
+      this.products.push(newProduct);
+    }
+    return newProduct;
   }
 
   findAll() {
-    return `This action returns all products`;
+    return this.products;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  findOne(sku: number) {
+    const product = this.products.find(product => product.sku === sku);
+    if (!product) {
+      throw new EntityNotFoundError(`Product with sku #${sku} was not found.`);
+    } else {
+      product.inventory.quantity = product.inventory.warehouses.reduce((a, b) => a + b.quantity, 0);
+      product.isMarketable = product.inventory.quantity > 0;
+    }
+    return product
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(sku: number, updateProductDto: UpdateProductDto) {
+    const product = this.findOne(sku);
+    const newProduct: Product = {
+      ...product,
+      ...updateProductDto
+    };
+    const index = this.products.indexOf(product);
+    this.products[index] = newProduct;
+    return newProduct;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(sku: number) {
+    const product = this.findOne(sku);
+    const index = this.products.indexOf(product);
+    this.products.splice(index, 1);
   }
 }
