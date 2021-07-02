@@ -6,9 +6,14 @@ import { EntityAlreadyExistsInterceptor } from './interceptors/entity-already-ex
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   // Pipes
   app.useGlobalPipes(
-    new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
   );
 
   // Interceptor

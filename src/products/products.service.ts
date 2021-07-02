@@ -10,12 +10,16 @@ export class ProductsService {
   private products: Product[] = [];
 
   create(createProductDto: CreateProductDto) {
-    const product = this.products.find(product => product?.sku === createProductDto.sku);
+    const product = this.products.find(
+      product => product?.sku === createProductDto.sku,
+    );
     const newProduct: Product = {
-      ...createProductDto
-    }
+      ...createProductDto,
+    };
     if (product) {
-      throw new EntityAlreadyExistsError(`Product with sku #${createProductDto.sku} already exists.`);
+      throw new EntityAlreadyExistsError(
+        `Product with sku #${createProductDto.sku} already exists.`,
+      );
     } else {
       this.products.push(newProduct);
     }
@@ -31,17 +35,20 @@ export class ProductsService {
     if (!product) {
       throw new EntityNotFoundError(`Product with sku #${sku} was not found.`);
     } else {
-      product.inventory.quantity = product.inventory.warehouses.reduce((a, b) => a + b.quantity, 0);
+      product.inventory.quantity = product.inventory.warehouses.reduce(
+        (a, b) => a + b.quantity,
+        0,
+      );
       product.isMarketable = product.inventory.quantity > 0;
     }
-    return product
+    return product;
   }
 
   update(sku: number, updateProductDto: UpdateProductDto) {
     const product = this.findOne(sku);
     const newProduct: Product = {
       ...product,
-      ...updateProductDto
+      ...updateProductDto,
     };
     const index = this.products.indexOf(product);
     this.products[index] = newProduct;
