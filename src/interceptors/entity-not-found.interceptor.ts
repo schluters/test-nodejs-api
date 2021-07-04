@@ -13,7 +13,7 @@ import { EntityNotFoundError } from '../errors/entity-not-found.error';
 export class EntityNotFoundInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      catchError((error) => {
+      catchError(error => {
         if (error instanceof EntityNotFoundError) {
           throw new NotFoundException(error.message);
         } else {

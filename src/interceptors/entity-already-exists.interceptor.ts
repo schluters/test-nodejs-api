@@ -13,7 +13,7 @@ import { EntityAlreadyExistsError } from '../errors/entity-already-exists.error'
 export class EntityAlreadyExistsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      catchError((error) => {
+      catchError(error => {
         if (error instanceof EntityAlreadyExistsError) {
           throw new ConflictException(error.message);
         } else {

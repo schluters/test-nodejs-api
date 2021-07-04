@@ -8,8 +8,8 @@ export class Product {
   sku: number;
   name: string;
   inventory: {
-    quantity?: number
-    warehouses: [warehouses]
+    quantity?: number;
+    warehouses: [warehouses];
   };
-  isMarketable?: boolean
+  isMarketable?: boolean;
 }

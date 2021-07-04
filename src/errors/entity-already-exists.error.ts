@@ -1,1 +1,1 @@
-export class EntityAlreadyExistsError extends Error { }
+export class EntityAlreadyExistsError extends Error {}

@@ -14,7 +14,7 @@ describe('ProductsController', () => {
     controller = module.get<ProductsController>(ProductsController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('should be endpoint /products method get return all products', () => {
+    expect(controller.findAll).toReturn(Array);
   });
 });

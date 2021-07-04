@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { EntityNotFoundError } from '../errors/entity-not-found.error';
 import { EntityAlreadyExistsError } from '../errors/entity-already-exists.error';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ProductsService {
@@ -46,6 +47,11 @@ export class ProductsService {
 
   update(sku: number, updateProductDto: UpdateProductDto) {
     const product = this.findOne(sku);
+    if (sku !== updateProductDto.sku) {
+      throw new EntityAlreadyExistsError(
+        `It is not possible to change the sku #${updateProductDto.sku} of this product.`,
+      );
+    }
     const newProduct: Product = {
       ...product,
       ...updateProductDto,
@@ -59,5 +65,10 @@ export class ProductsService {
     const product = this.findOne(sku);
     const index = this.products.indexOf(product);
     this.products.splice(index, 1);
+  }
+
+  @Cron('45 * * * * *')
+  handleCron() {
+    console.log(this.findAll());
   }
 }
